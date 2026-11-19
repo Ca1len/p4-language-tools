@@ -1,5 +1,4 @@
 *.vsix
-!/dist/p4-language-tools-0.3.2.vsix
 node_modules/
 __pycache__/
 *.py[cod]

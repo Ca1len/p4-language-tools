@@ -4,7 +4,7 @@
 
 ## Установка
 
-Скачайте [p4-language-tools-0.3.2.vsix](dist/p4-language-tools-0.3.2.vsix?raw=true) и выполните команду из каталога загрузки. Собрать тот же плагин из исходников можно командой `python3 build_vsix.py` из корня репозитория.
+Скачайте [p4-language-tools-0.3.2.vsix](https://github.com/Ca1len/p4-language-tools/releases/download/v0.3.2/p4-language-tools-0.3.2.vsix) и выполните команду из каталога загрузки. Собрать тот же плагин из исходников можно командой `python3 build_vsix.py` из корня репозитория.
 
 ```sh
 code --install-extension ./p4-language-tools-0.3.2.vsix
