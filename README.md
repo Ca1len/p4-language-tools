@@ -1,22 +1,24 @@
 # P4 Language Tools 0.3.2
 
-Расширение VS Code для P4₁₄ и P4₁₆ с языковым сервером по stdio. Для навигации и подсказок достаточно открыть папку проекта. Указанные каталоги SDK используются и тогда, когда диагностика компилятора выключена.
+[Русская версия](README.ru.md)
 
-## Установка
+A VS Code extension for P4₁₄ and P4₁₆ with a language server that communicates over stdio. Open your project folder to navigate between files and get completions and signature help. The editor uses your configured SDK include paths even when compiler diagnostics are turned off.
 
-Скачайте [p4-language-tools-0.3.2.vsix](https://github.com/Ca1len/p4-language-tools/releases/download/v0.3.2/p4-language-tools-0.3.2.vsix) и выполните команду из каталога загрузки. Собрать тот же плагин из исходников можно командой `python3 build_vsix.py` из корня репозитория.
+## Installation
+
+Download [p4-language-tools-0.3.2.vsix](https://github.com/Ca1len/p4-language-tools/releases/download/v0.3.2/p4-language-tools-0.3.2.vsix) and run the following command from the download directory. To build the extension from source, run `python3 build_vsix.py` from the repository root.
 
 ```sh
 code --install-extension ./p4-language-tools-0.3.2.vsix
 ```
 
-Можно также выбрать **Extensions → … → Install from VSIX**. Требуется настольный VS Code 1.75 или новее либо VS Code с удалённым Extension Host. Пакет содержит клиент и сервер. При сравнении с другим P4-расширением удобнее включать их по одному для данного workspace, чтобы сразу понимать источник подсказок.
+You can also choose **Extensions → … → Install from VSIX**. The package includes both the client and the server. It requires VS Code 1.75 or later and supports both desktop and remote extension hosts. If you are comparing P4 extensions, enable one at a time in the workspace so you can tell which one provides each suggestion.
 
-## Подсветка в версии 0.3
+## Syntax highlighting in 0.3
 
-Подсветка работает сразу при открытии файла. TextMate-грамматика распознаёт ключевые слова, литералы вроде `16w0x0800`, директивы, аннотации и комментарии в обоих диалектах. Семантический провайдер расставляет категории имён по объявлениям из текущего файла и подключённых заголовков. Например, у `frame.tag` поле получает категорию `property`, а имя действия в месте вызова — `function`. Таблицы и состояния парсера имеют отдельные категории `p4Table` и `p4ParserState`.
+Highlighting starts as soon as you open a file. The TextMate grammar recognizes keywords, literals such as `16w0x0800`, directives, annotations, and comments in both dialects. Semantic highlighting uses declarations in the current file and its included headers to classify names. For example, `tag` in `frame.tag` is a `property`, and an action name at a call site is a `function`. Tables and parser states have their own token types, `p4Table` and `p4ParserState`.
 
-Конкретные цвета определяет тема. Команда **Developer: Inspect Editor Tokens and Scopes** показывает, какая категория выбрана под курсором. Если тема использует близкие оттенки, можно задать цвета только для P4. Пример для тёмной темы:
+Your theme sets the colors. Run **Developer: Inspect Editor Tokens and Scopes** to see the token type under the cursor. If some colors are hard to tell apart, you can override them just for P4. This example uses colors for a dark theme.
 
 ```json
 {
@@ -32,30 +34,30 @@ code --install-extension ./p4-language-tools-0.3.2.vsix
 }
 ```
 
-При переходе с другого P4-расширения используйте **Disable (Workspace)** для его отдельной копии. Так в workspace будет ровно один поставщик грамматики и определений для языка `p4`. Для этой сборки заимствована и адаптирована Apache-грамматика [zhanghanwang.p4-lang](https://github.com/RabbitWhite1/p4-lang-vscode). Парсер ANTLR P4₁₆ и шаблон таблицы происходят из [fattaholmanan/p4-vscode-extension](https://github.com/fattaholmanan/p4-vscode-extension). По примеру [LivingThings.p4](https://github.com/zznobodyzz/vscode-p4-extention) независимо реализован показ явного значения члена enum при наведении. Ревизии и лицензии включены в пакет.
+If you are switching from another P4 extension, select **Disable (Workspace)** on that extension so that only one extension supplies the grammar and definitions for `p4`. The syntax grammar is adapted from the Apache-licensed [zhanghanwang.p4-lang](https://github.com/RabbitWhite1/p4-lang-vscode). The P4₁₆ ANTLR parser and table snippet come from [fattaholmanan/p4-vscode-extension](https://github.com/fattaholmanan/p4-vscode-extension). Hovering over an enum member shows its explicitly assigned value, a feature implemented independently following the example of [LivingThings.p4](https://github.com/zznobodyzz/vscode-p4-extention). The package includes upstream revisions and licenses.
 
-## Работа в редакторе
+## Editor features
 
-| Действие | Пример |
+| Feature | How to use it |
 |---|---|
-| Подсказка сигнатуры | Наберите `set_port(` или нажмите **Ctrl+Shift+Space** внутри вызова. После запятой выделяется следующий параметр. При наличии документации появится его описание из `@param`. |
-| Имена аргументов | При включённых **Editor: Inlay Hints** рядом с позиционным аргументом может появиться, например, `port:`. Сигнатура должна однозначно определять имя. |
-| Документация | Наведите мышь на имя в месте вызова. Сервер извлечёт исходную сигнатуру и комментарий перед объявлением, в том числе из несохранённого включаемого файла. Поддерживаются `///`, `//!`, блочные комментарии, теги Doxygen и аннотации `@brief("…")` / `@description("…")`. |
-| Переходы | **F12** на имени переходит к объявлению, на пути внутри буквального `#include` — к файлу. Команда **Go to Type Definition** работает для переменных и полей с распознанным типом. **Shift+F12** ищет употребления. |
-| Поля и методы | Наберите точку после заголовка, структуры или экземпляра известного extern. Поддерживаются типизированные параметры, цепочки полей, некоторые typedef и стеки заголовков. В P4₁₄ поля ищутся также через экземпляры `header` и `metadata`. |
-| Текстовый поиск | **P4: Find Identifier in Workspace Text** из палитры или контекстного меню показывает совпадения целого имени с путями, строками и фрагментами. Работает и в комментариях, и в директивах. Выбор строки открывает файл. Используется `rg`, если он в PATH расширения, иначе — встроенный поиск. |
-| Исправление пути | На строке неразрешённого include нажмите **Ctrl+.**. Если в папке проекта есть P4-файл с тем же именем, можно выбрать предложенный относительный путь. |
-| Форматирование и переименование | **Format Document** выравнивает только отступы по настройкам редактора. **F2** поддерживает скалярные локальные переменные внутри простого тела action без вложенных блоков и вызовов. Для параметров, глобальных имён и полей сервер отказывает в переименовании. |
+| Signature help | Type `set_port(` or press **Ctrl+Shift+Space** inside a call. Typing a comma highlights the next parameter. Its description comes from the corresponding `@param` tag when available. |
+| Parameter name hints | Enable **Editor: Inlay Hints** to see labels such as `port:` beside positional arguments when the signature identifies the parameter unambiguously. |
+| Hover documentation | Hover over a name at a call site to see the original signature and the comment preceding the declaration. This works with unsaved edits in included files. The server recognizes `///`, `//!`, block comments, Doxygen tags, and `@brief("…")` and `@description("…")` annotations. |
+| Navigation | Press **F12** on a name to open its declaration or on a literal `#include` path to open the file. Use **Go to Type Definition** on a variable or field with a known type, or **Shift+F12** to find references. |
+| Field and method completion | Type a dot after a header, struct, or instance of a known extern. Completion works with typed parameters, chained field access, some typedefs, and header stacks. In P4₁₄ it also resolves fields on `header` and `metadata` instances. |
+| Workspace text search | Run **P4: Find Identifier in Workspace Text** from the Command Palette or context menu to find whole-identifier matches, including in comments and directives. Results show file paths, line numbers, and snippets. Select a result to open the file. The extension uses `rg` when available on its `PATH` and falls back to a built-in search. |
+| Include path fixes | Press **Ctrl+.** on an unresolved include. If the project folder contains a P4 file with the same filename, you can select its suggested relative path. |
+| Formatting and renaming | **Format Document** adjusts indentation using your editor settings. **F2** can rename scalar locals in a simple action body that contains no nested blocks or calls. Parameters, global names, and fields are outside the supported rename scope. |
 
-На P4₁₆ сервер извлекает сигнатуры функций, действий, конструкторов и известных методов extern. На P4₁₄ он читает объявления action и primitive_action и знает ряд стандартных примитивов, в том числе варианты `modify_field` с маской и без неё. Список вариантов при перегрузке строится по доступным объявлениям, типу получателя, именам и количеству аргументов. В сложных случаях полезно посмотреть все предложенные варианты.
+For P4₁₆, the server reads signatures for functions, actions, constructors, and known extern methods. For P4₁₄, it reads `action` and `primitive_action` declarations and knows several standard primitives, including `modify_field` with and without a mask. It selects overloads using the available declarations, receiver type, argument names, and argument count. If several signatures fit, you can browse the candidates.
 
-На функциональном макросе из SDK доступны F12, hover и подсказка параметров из текстового `#define`. В условных ветвях сервер может предложить несколько объявлений. Для встроенных методов заголовков P4₁₆ (`isValid()`, `setValid()`, `setInvalid()`) и `table.apply()` доступны подсказки без исходного файла.
+For function-like SDK macros, **F12**, hover, and signature help use the source `#define`. Conditional branches can yield more than one declaration. Signature help for the built-in P4₁₆ header methods (`isValid()`, `setValid()`, and `setInvalid()`) and for `table.apply()` works without a source declaration.
 
-Текстовый поиск отдаёт до 250 совпадений. Приоритет у открытых буферов. Файлы на диске размером больше 2 MiB и каталоги сборки пропускаются. Глобальный индекс перечисляет до 5000 исходников. При отсутствии `rg` встроенный обход пропускает скрытые каталоги, но не интерпретирует правила `.gitignore`.
+Workspace text search returns up to 250 matches and gives open buffers priority. It skips build directories and files larger than 2 MiB on disk. The workspace index lists up to 5,000 source files. If `rg` is unavailable, the built-in search skips hidden directories and does not apply `.gitignore` rules.
 
-## Настройка SDK и компилятора
+## SDK and compiler settings
 
-Например, при `#include <vendor.p4>` укажите **каталог, содержащий vendor.p4**, в `.vscode/settings.json`. Для двух проектов с разными параметрами компиляции используйте отдельные окна VS Code. Ниже пути приведены для примера.
+If your code uses `#include <vendor.p4>`, add **the directory containing `vendor.p4`** to `p4.compiler.includePaths` in `.vscode/settings.json`. Use separate VS Code windows for projects that need different compiler settings. Adjust the paths below for your project.
 
 ```json
 {
@@ -69,43 +71,48 @@ code --install-extension ./p4-language-tools-0.3.2.vsix
 }
 ```
 
-Для P4₁₆ в расширение входят справочные `core.p4`, `v1model.p4`, `psa.p4` (BMv2) и `pna.p4`. Директория из `p4.compiler.includePaths` имеет приоритет. Встроенные файлы используются редактором. Компилятор использует собственный SDK и параметры проекта.
+The extension bundles reference copies of `core.p4`, `v1model.p4`, `psa.p4` (BMv2), and `pna.p4` for P4₁₆. The editor searches your configured include directories first. The compiler uses its own SDK and your project's compiler settings.
 
-Для legacy-проекта задайте `"p4.compiler.language": "p4-14"`. В режиме `auto` учитываются расширения `.p4_14` / `.p4_16` и характерные объявления P4₁₄. В неоднозначном файле используется P4₁₆.
+For a P4₁₄ project, set `"p4.compiler.language": "p4-14"`. In `auto` mode, the server recognizes the `.p4_14` and `.p4_16` extensions and looks for declarations specific to P4₁₄. It defaults to P4₁₆ when the dialect is ambiguous.
 
-При вводе редактор показывает структурные ошибки, например непарную скобку и недоступный локальный include. В P4₁₆ ANTLR дополнительно проверяет синтаксис несохранённого буфера. Отключить этот дополнительный проход для нестандартного диалекта можно через `p4.syntaxDiagnostics.enabled`. При неизвестной условной ветви, неподдерживаемых директивах или файле больше 512 тысяч единиц UTF-16 проход пропускается. Некоторые SDK используют макросы, которые меняют грамматику после раскрытия. В таком проекте окончательное решение о корректности даёт компилятор.
+As you type, the editor reports structural errors such as unmatched brackets and missing local includes. For P4₁₆, an ANTLR parser also checks the syntax of the unsaved buffer. The server skips this pass for files with unresolved conditional branches, unsupported directives, or more than 524,288 UTF-16 code units. If your SDK uses a custom dialect or macros whose expansion changes the syntax, you can disable this pass with `"p4.syntaxDiagnostics.enabled": false` and use the compiler to validate the program.
 
-Диагностика компилятора включается отдельно. При сохранении P4-файла сервер запускает компилятор из `p4.compiler.path` для выбранной точки входа. Если точка входа пустая, проверяется сам сохранённый файл. Компилятор читает файлы с диска, поэтому для согласованной диагностики полезна команда **Save All**. Для P4₁₄ нужен компилятор со сборочной поддержкой этого диалекта. В Restricted Mode внешняя компиляция выключена.
+Enable compiler diagnostics with `"p4.compiler.enabled": true`. When you save a P4 file, the server runs the compiler specified by `p4.compiler.path` on the configured entry point. If the entry point is empty, it checks the file you saved. Use **Save All** to include edits from other files in the same run. P4₁₄ requires a compiler built with support for that dialect. VS Code disables external compilation in Restricted Mode.
 
-Ошибки и предупреждения с координатами появляются в панели **Problems** (`Ctrl+Shift+M`), в редакторе и в дереве файлов. Например, для `switch.p4(57):syntax error, unexpected IDENTIFIER, expecting APPLY` сервер берёт номер строки из сообщения и диапазон подчёркивания из маркера `^^^^` под фрагментом кода. Переход из Problems открывает указанный компилятором файл, в том числе подключённый через `#include`. Успешная повторная сборка снимает его прежние ошибки.
+Errors and warnings with source locations appear in the **Problems** panel (`Ctrl+Shift+M`), in the editor, and in the file tree. For example, given `switch.p4(57):syntax error, unexpected IDENTIFIER, expecting APPLY`, the server reads line 57 from the message and uses the `^^^^` marker beneath the source excerpt to underline the token. Select the diagnostic in **Problems** to open the file the compiler reported, including files reached through `#include`. A successful rebuild clears previous compiler errors for that entry point.
 
-**P4: Check Project** из палитры команд запускает ту же проверку вручную. Если в настройках задан `p4.compiler.entrypoint`, проверяется эта точка входа. Иначе откройте сохранённый P4-файл, который хотите проверить. С одной папкой и заданной точкой входа команду можно вызвать даже без открытого P4-файла. Если в папке есть изменённые P4-файлы, команда предложит **Save and Check** и после сохранения запустит компилятор один раз.
+Run **P4: Check Project** from the Command Palette to start the same check manually. With `p4.compiler.entrypoint` set in a single-folder workspace, you can run the command with no P4 file open. If you leave the setting empty, open the saved P4 file you want to check. If the workspace folder contains unsaved P4 files, choose **Save and Check** to save them and run the compiler once.
 
-На подчёркнутом `example_table_key.aply` нажмите **Ctrl+.** и выберите **Replace 'aply' with 'apply'**. Это исправление доступно для сохранённого файла, когда компилятор указал на токен `aply` и сообщил `expecting APPLY`.
+For an underlined `example_table_key.aply`, press **Ctrl+.** and select **Replace 'aply' with 'apply'**. This quick fix is available for a saved file when the compiler points to the `aply` token and reports `expecting APPLY`.
 
-Если p4c указал дополнительные места ошибки, раскройте её в **Problems**. Например, при вызове функции с несовместимым аргументом можно перейти от вызова к объявлению в другом файле. Команда **P4: Show Compiler Output** открывает журнал каждого запуска с точкой входа, выводом компилятора и кодом завершения. Там видны и сообщения backend без номера строки. Лимит вывода за запуск составляет 4 МиБ.
+Expand a diagnostic in **Problems** to see related locations reported by p4c. For example, an argument type error can link a call to a declaration in another file. **P4: Show Compiler Output** opens the log with the entry point, compiler output, and exit code for each run. It also shows backend messages without a line number. The output limit is 4 MiB per run.
 
-## Точность анализа
+## How the language server analyzes P4
 
-Сервер учитывает известные значения `-D`, `-U` и определения из доступных заголовков, сохраняет координаты исходника и исключает заведомо неактивные ветви. При неизвестном условии оставляет возможные варианты. Сервер индексирует токены, объявления, области видимости и связи по буквальным include. Он не строит типизированный IR компилятора, не выполняет полный C-препроцессинг и не вычисляет активность всех ветвей `#if`. Макросы, некоторые обобщённые типы и архитектурные расширения могут давать несколько кандидатов или оставаться неразрешёнными. Поиск текста помогает выбрать место вручную. Сигнатуры и документация во время редактирования работают независимо от запуска p4c.
+The server tracks macro definitions and undefinitions from `-D`, `-U`, and available headers. It preserves source locations, skips branches it can prove inactive, and keeps the alternatives when a condition is unknown. It indexes tokens, declarations, scopes, and literal `#include` paths. Its analysis covers a subset of C preprocessing and P4 type resolution, so it cannot evaluate every `#if` condition or build the compiler's typed intermediate representation. Macros, some generic types, and architecture-specific extensions can yield several candidate declarations or remain unresolved. Use workspace text search to inspect those cases. Signature help and hover documentation work independently of p4c.
 
-## Сборка из исходников
+## Building from source
 
-В корневом каталоге репозитория выполните
+Use Node.js 20 or later to run the tests and Python 3 to build the VSIX. Run these commands from the repository root.
 
 ```sh
 node --test server/compiler.test.js server/test/*.test.js test/*.test.js extension/test/*.test.js
 python3 build_vsix.py
 ```
 
-Для отдельной проверки реальных TextMate scopes выполните `cd test/textmate && npm ci && node --test grammar.test.js`. Для проверки в своём настольном VS Code выполните `python3 test/vscode/run.py /путь/к/расширению.vsix`. Тест использует временный профиль. Для запуска с реальными компиляторами передайте пути к ним через `P4TEST_16` и `P4TEST_14` и запустите `node --test test/real-compiler.cjs`. Пакет уже содержит собранный ANTLR-парсер. Для его пересборки в исходниках предусмотрены `server/vendor-antlr/source/package-lock.json` и команда `npm ci && npm run build` в той же директории.
+The test suite starts a separate language server process, exercises the client with a simulated VS Code API, and uses a test executable for compiler diagnostics. For additional checks or to rebuild the parser, use the following commands.
 
-Для тестов используйте Node.js 20 или новее. Для упаковки нужен Python 3. Автоматические проверки запускают отдельный LSP-процесс и проверяют клиент с имитацией API VS Code. Тесты компилятора используют тестовый исполняемый файл. Команды **P4: Restart Language Server** и **P4: Show Language Server Output** доступны из палитры.
+- **TextMate scopes** — Run `(cd test/textmate && npm ci && node --test grammar.test.js)` to exercise the grammar with TextMate.
+- **Desktop VS Code** — Run `python3 test/vscode/run.py /path/to/extension.vsix` to test the packaged extension in a temporary profile.
+- **Real compilers** — Set `P4TEST_16` and `P4TEST_14` to the paths of the corresponding compiler executables, then run `node --test test/real-compiler.cjs`.
+- **ANTLR parser** — The package includes a prebuilt parser. To rebuild it using the checked-in `server/vendor-antlr/source/package-lock.json`, run `(cd server/vendor-antlr/source && npm ci && npm run build)`.
 
-## Лицензии
+To inspect or restart the running server, use **P4: Show Language Server Output** or **P4: Restart Language Server** from the Command Palette.
 
-Исходный код P4 Language Tools распространяется под лицензией [MIT](LICENSE). Лицензии и сведения об авторах заимствованных компонентов включены в репозиторий.
+## Licenses
 
-- [Грамматика подсветки и сниппеты](extension/third-party/p4-syntax/NOTICE.txt)
-- [Грамматика P4₁₆ и среда выполнения ANTLR](server/vendor-antlr/NOTICE.txt)
-- [Стандартные заголовки P4](server/p4include/sources.json) и [их лицензия](server/p4include/LICENSE)
+P4 Language Tools is released under the [MIT License](LICENSE). The repository includes license and attribution information for its third-party components.
+
+- [Syntax highlighting grammar and snippets](extension/third-party/p4-syntax/NOTICE.txt)
+- [P4₁₆ grammar and ANTLR runtime](server/vendor-antlr/NOTICE.txt)
+- [Standard P4 headers](server/p4include/sources.json) and [their license](server/p4include/LICENSE)
