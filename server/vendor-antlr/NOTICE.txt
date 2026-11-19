@@ -1,0 +1,11 @@
+P4 syntax parser attribution
+
+The bundled parser includes the unmodified P4Lexer.ts, P4Parser.ts and P4Listener.ts generated
+for the Apache-2.0 P4_16 grammar by Ali Fattaholmanan and contributors:
+https://github.com/fattaholmanan/p4-vscode-extension/tree/48428a3bd9cb5508454eb2db2c73838be4076ffd
+The grammar was ported by its authors from p4lang/p4c's P4 grammar.
+The released source archive includes these sources and P4.g4 at that revision.
+
+Editor integration: added a standalone error callback and disabled parse-tree construction.
+Compiled with esbuild 0.28.1 and bundled with antlr4ng 3.0.16 (BSD-3-Clause).
+See LICENSE-APACHE.txt, LICENSE-UPSTREAM.txt and LICENSE-ANTLR4NG.txt in this directory.

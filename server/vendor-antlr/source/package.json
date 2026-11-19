@@ -1,0 +1,9 @@
+{
+  "name": "p4-language-tools-antlr-build",
+  "version": "0.3.0",
+  "private": true,
+  "scripts": {
+    "build": "esbuild entry.ts --platform=node --target=node16 --format=cjs --bundle --minify --legal-comments=inline --outfile=../p4-parser.js"
+  },
+  "devDependencies": { "antlr4ng": "3.0.16", "esbuild": "0.28.1" }
+}

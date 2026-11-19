@@ -1,0 +1,16 @@
+This distribution contains adaptations of the following works.
+
+P4 language support for VS Code, Copyright 2026 Zhanghan Wang, Apache-2.0
+https://github.com/RabbitWhite1/p4-lang-vscode
+db09e8d7a606a1e79365e5c0d04a6bbd389772f2, syntaxes/p4.tmLanguage.json
+Modified by P4 Language Tools contributors: extend the grammar to P4_14,
+highlight P4 declarations, documentation tags, literal formats, annotations,
+members and preprocessor directives, and repair conflicting token rules.
+
+P4 VSCode Extension by Ali Fattaholmanan, Apache-2.0
+https://github.com/fattaholmanan/p4-vscode-extension
+48428a3bd9cb5508454eb2db2c73838be4076ffd, snippets/table.code-snippets
+Modified by P4 Language Tools contributors: strict JSON, dialect prefixes,
+match kinds, tab stop order and linked default action.
+
+See the accompanying Apache-2.0.txt for the license of these adaptations.

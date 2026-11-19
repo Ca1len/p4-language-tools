@@ -1,0 +1,7 @@
+{
+  "name": "p4-host-tests",
+  "publisher": "localtesting",
+  "version": "0.0.1",
+  "engines": {"vscode": "^1.75.0"},
+  "description": "Isolated Extension Host smoke-test driver"
+}

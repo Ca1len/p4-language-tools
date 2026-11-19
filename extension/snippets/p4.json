@@ -1,0 +1,77 @@
+{
+  "P4_16 table": {
+    "prefix": [
+      "p416-table",
+      "table"
+    ],
+    "body": [
+      "table ${1:tableName} {",
+      "\tactions = {",
+      "\t\t${2:actionName};",
+      "\t\t${3:_drop};",
+      "\t}",
+      "\tkey = {",
+      "\t\t${4|standard_metadata,meta|}.${5:field}: ${6|exact,lpm,ternary,range|};",
+      "\t}",
+      "\tsize = ${7:1024};",
+      "\tdefault_action = ${3:_drop}();",
+      "}"
+    ],
+    "description": "P4_16 table with keys, actions and a default action."
+  },
+  "P4_16 parser state": {
+    "prefix": "p416-state",
+    "description": "P4_16 parser state",
+    "body": [
+      "state ${1:parse_header} {",
+      "\t${2:packet}.extract(${3:hdr.ethernet});",
+      "\ttransition ${4:accept};",
+      "}"
+    ]
+  },
+  "P4_16 action": {
+    "prefix": "p416-action",
+    "description": "P4_16 action",
+    "body": [
+      "action ${1:set_port}(bit<${2:9}> ${3:port}) {",
+      "\t${4:meta.egress_port} = ${3:port};",
+      "}"
+    ]
+  },
+  "P4_14 header type and instance": {
+    "prefix": "p414-header",
+    "description": "P4_14 header type and instance",
+    "body": [
+      "header_type ${1:ethernet_t} {",
+      "\tfields {",
+      "\t\t${2:ether_type} : ${3:16};",
+      "\t}",
+      "}",
+      "header ${1:ethernet_t} ${4:ethernet};"
+    ]
+  },
+  "P4_14 table": {
+    "prefix": "p414-table",
+    "description": "P4_14 table",
+    "body": [
+      "table ${1:lookup} {",
+      "\treads {",
+      "\t\t${2:ethernet.ether_type} : ${3|exact,lpm,ternary,valid|};",
+      "\t}",
+      "\tactions {",
+      "\t\t${4:forward};",
+      "\t}",
+      "\tsize : ${5:1024};",
+      "}"
+    ]
+  },
+  "P4_14 action": {
+    "prefix": "p414-action",
+    "description": "P4_14 action",
+    "body": [
+      "action ${1:set_port}(${2:port}) {",
+      "\tmodify_field(${3:standard_metadata.egress_spec}, ${2:port});",
+      "}"
+    ]
+  }
+}

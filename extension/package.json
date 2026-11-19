@@ -1,0 +1,238 @@
+{
+  "name": "p4-language-tools",
+  "displayName": "P4 Language Tools",
+  "description": "Syntax and semantic highlighting, signature help, navigation and compiler diagnostics for P4_14 and P4_16.",
+  "version": "0.3.2",
+  "publisher": "local",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "keywords": [
+    "p4",
+    "p4lang",
+    "language server"
+  ],
+  "activationEvents": [
+    "onLanguage:p4",
+    "onCommand:p4.restartServer",
+    "onCommand:p4.searchText",
+    "onCommand:p4.checkProject",
+    "onCommand:p4.showCompilerOutput"
+  ],
+  "main": "./src/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "p4",
+        "aliases": [
+          "P4",
+          "p4"
+        ],
+        "extensions": [
+          ".p4",
+          ".p4i",
+          ".p4inc",
+          ".p4_14",
+          ".p4_16"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "p4",
+        "scopeName": "source.p4",
+        "path": "./syntaxes/p4.tmLanguage.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "p4.restartServer",
+        "title": "P4: Restart Language Server"
+      },
+      {
+        "command": "p4.showOutput",
+        "title": "P4: Show Language Server Output"
+      },
+      {
+        "command": "p4.checkProject",
+        "title": "P4: Check Project"
+      },
+      {
+        "command": "p4.showCompilerOutput",
+        "title": "P4: Show Compiler Output"
+      },
+      {
+        "command": "p4.searchText",
+        "title": "P4: Find Identifier in Workspace Text"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "p4.searchText",
+          "when": "editorLangId == p4",
+          "group": "navigation@8"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "P4 Language Tools",
+      "properties": {
+        "p4.compiler.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Run p4c for compiler diagnostics. Configure a suitable target and compiler arguments first.",
+          "restricted": true
+        },
+        "p4.compiler.path": {
+          "type": "string",
+          "default": "p4test",
+          "description": "Path to the P4 compiler executable.",
+          "restricted": true
+        },
+        "p4.compiler.args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Additional arguments passed to p4c as separate arguments.",
+          "restricted": true
+        },
+        "p4.compiler.language": {
+          "type": "string",
+          "enum": [
+            "auto",
+            "p4-14",
+            "p4-16"
+          ],
+          "default": "auto",
+          "description": "P4 language version used by the compiler."
+        },
+        "p4.compiler.includePaths": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Additional include directories.",
+          "restricted": true
+        },
+        "p4.compiler.entrypoint": {
+          "type": "string",
+          "default": "",
+          "description": "Translation unit to check, relative to the workspace folder. Empty means the saved file.",
+          "restricted": true
+        },
+        "p4.compiler.timeoutMs": {
+          "type": "integer",
+          "default": 15000,
+          "minimum": 1,
+          "description": "Compiler timeout in milliseconds."
+        },
+        "p4.syntaxDiagnostics.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Check the current P4_16 source using the bundled ANTLR grammar while typing. Syntax checks run independently of p4test."
+        }
+      }
+    },
+    "snippets": [
+      {
+        "language": "p4",
+        "path": "./snippets/p4.json"
+      }
+    ],
+    "configurationDefaults": {
+      "[p4]": {
+        "editor.semanticHighlighting.enabled": true
+      }
+    },
+    "semanticTokenTypes": [
+      {
+        "id": "p4Table",
+        "superType": "variable",
+        "description": "A programmable P4 match-action table."
+      },
+      {
+        "id": "p4ParserState",
+        "superType": "enumMember",
+        "description": "A named state of a P4 parser."
+      }
+    ],
+    "semanticTokenScopes": [
+      {
+        "language": "p4",
+        "scopes": {
+          "type": [
+            "entity.name.type.p4"
+          ],
+          "class": [
+            "entity.name.type.class.p4"
+          ],
+          "struct": [
+            "entity.name.type.struct.p4"
+          ],
+          "enum": [
+            "entity.name.type.enum.p4"
+          ],
+          "enumMember": [
+            "variable.other.enummember.p4",
+            "constant.other.enum.p4"
+          ],
+          "function": [
+            "entity.name.function.p4"
+          ],
+          "method": [
+            "entity.name.function.member.p4"
+          ],
+          "method.defaultLibrary": [
+            "support.function.p4"
+          ],
+          "parameter": [
+            "variable.parameter.p4"
+          ],
+          "property": [
+            "variable.other.property.p4"
+          ],
+          "variable": [
+            "variable.other.readwrite.p4"
+          ],
+          "variable.readonly": [
+            "variable.other.constant.p4"
+          ],
+          "macro": [
+            "entity.name.function.preprocessor.p4"
+          ],
+          "decorator": [
+            "entity.name.function.decorator.p4"
+          ],
+          "typeParameter": [
+            "entity.name.type.parameter.p4"
+          ],
+          "p4Table": [
+            "entity.name.type.table.p4"
+          ],
+          "p4ParserState": [
+            "entity.name.label.p4",
+            "constant.other.enum.p4"
+          ]
+        }
+      }
+    ]
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "Compiler diagnostics are disabled in Restricted Mode because they run an external program."
+    },
+    "virtualWorkspaces": {
+      "supported": false
+    }
+  }
+}

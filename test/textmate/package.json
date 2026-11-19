@@ -1,0 +1,12 @@
+{
+  "name": "p4-language-tools-grammar-tests",
+  "private": true,
+  "version": "0.3.0",
+  "scripts": {
+    "test": "node --test grammar.test.js"
+  },
+  "devDependencies": {
+    "vscode-oniguruma": "2.0.1",
+    "vscode-textmate": "9.3.2"
+  }
+}

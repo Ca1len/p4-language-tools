@@ -1,0 +1,497 @@
+{
+  "name": "P4 (14 and 16)",
+  "scopeName": "source.p4",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#macros"
+    },
+    {
+      "include": "#annotations"
+    },
+    {
+      "include": "#headers"
+    },
+    {
+      "include": "#structs"
+    },
+    {
+      "include": "#parsers"
+    },
+    {
+      "include": "#controls"
+    },
+    {
+      "include": "#states"
+    },
+    {
+      "include": "#actions"
+    },
+    {
+      "include": "#tables"
+    },
+    {
+      "include": "#enum"
+    },
+    {
+      "include": "#otherDeclarations"
+    },
+    {
+      "include": "#tableprops"
+    },
+    {
+      "include": "#builtin_types"
+    },
+    {
+      "include": "#modifiers"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#constants"
+    },
+    {
+      "include": "#numerics"
+    },
+    {
+      "include": "#member_visits"
+    },
+    {
+      "include": "#builtins"
+    },
+    {
+      "include": "#calls"
+    },
+    {
+      "include": "#legacyFields"
+    },
+    {
+      "include": "#operators"
+    }
+  ],
+  "repository": {
+    "docTags": {
+      "name": "storage.type.class.documentation.p4",
+      "match": "(?<![\\w])[@\\\\](?:brief|param(?:\\[[\\w, ]+\\])?|return[s]?|note|warning|see|sa|tparam|deprecated|code|endcode|details|description)\\b"
+    },
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.documentation.p4",
+          "begin": "//[/!]",
+          "end": "$",
+          "patterns": [
+            {
+              "include": "#docTags"
+            }
+          ]
+        },
+        {
+          "name": "comment.block.documentation.p4",
+          "begin": "/\\*(?:\\*(?!/)|!)",
+          "end": "\\*/",
+          "patterns": [
+            {
+              "include": "#docTags"
+            }
+          ]
+        },
+        {
+          "name": "comment.line.double-slash.p4",
+          "begin": "//",
+          "end": "$"
+        },
+        {
+          "name": "comment.block.p4",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "name": "string.quoted.double.p4",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "name": "constant.character.escape.p4",
+          "match": "\\\\(?:[0-7]{1,3}|x[0-9A-Fa-f]+|.|$)"
+        }
+      ]
+    },
+    "numerics": {
+      "name": "constant.numeric.p4",
+      "match": "(?<![A-Za-z_0-9])(?:[0-9][0-9_]*[ws])?(?:0[xX][0-9a-fA-F_]+|0[oO][0-7_]+|0[bB][01_]+|0[dD][0-9_]+|[0-9][0-9_]*)(?![A-Za-z_0-9])"
+    },
+    "annotations": {
+      "match": "(@)([A-Za-z_][A-Za-z_0-9]*)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.annotation.p4"
+        },
+        "2": {
+          "name": "storage.type.annotation.p4"
+        }
+      }
+    },
+    "macros": {
+      "patterns": [
+        {
+          "name": "meta.preprocessor.include.p4",
+          "begin": "^[ \\t]*(#)[ \\t]*(include)\\b",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.directive.p4"
+            },
+            "2": {
+              "name": "keyword.control.directive.include.p4"
+            }
+          },
+          "end": "(?<!\\\\)(?=\\n)",
+          "patterns": [
+            {
+              "name": "string.quoted.other.include.p4",
+              "begin": "<",
+              "end": ">|$"
+            },
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            }
+          ]
+        },
+        {
+          "name": "meta.preprocessor.macro.p4",
+          "begin": "^[ \\t]*(#)[ \\t]*(define)\\b(?:[ \\t]+([A-Za-z_][A-Za-z_0-9]*))?",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.directive.p4"
+            },
+            "2": {
+              "name": "keyword.control.directive.p4"
+            },
+            "3": {
+              "name": "entity.name.function.preprocessor.p4"
+            }
+          },
+          "end": "(?<!\\\\)(?=\\n)",
+          "patterns": [
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#numerics"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        },
+        {
+          "name": "meta.preprocessor.p4",
+          "begin": "^[ \\t]*(#)[ \\t]*(if|ifdef|ifndef|elif|else|endif|undef|error|warning|pragma|line)\\b",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.directive.p4"
+            },
+            "2": {
+              "name": "keyword.control.directive.p4"
+            }
+          },
+          "end": "(?<!\\\\)(?=\\n)",
+          "patterns": [
+            {
+              "name": "keyword.operator.word.p4",
+              "match": "\\bdefined\\b"
+            },
+            {
+              "include": "#comments"
+            },
+            {
+              "include": "#strings"
+            },
+            {
+              "include": "#numerics"
+            },
+            {
+              "include": "#operators"
+            }
+          ]
+        }
+      ]
+    },
+    "headers": {
+      "name": "meta.header.p4",
+      "match": "\\b(header_type|header_union|header)\\s+([A-Za-z_][A-Za-z_0-9]*)\\b",
+      "captures": {
+        "1": {
+          "name": "storage.type.header.p4"
+        },
+        "2": {
+          "name": "entity.name.type.header.p4"
+        }
+      }
+    },
+    "structs": {
+      "name": "meta.struct.p4",
+      "match": "\\b(struct)\\s+([A-Za-z_][A-Za-z_0-9]*)\\b",
+      "captures": {
+        "1": {
+          "name": "storage.type.struct.p4"
+        },
+        "2": {
+          "name": "entity.name.type.structs.p4"
+        }
+      }
+    },
+    "parsers": {
+      "name": "meta.parser.p4",
+      "match": "\\b(parser)\\s+([A-Za-z_][A-Za-z_0-9]*)\\b",
+      "captures": {
+        "1": {
+          "name": "storage.type.parser.p4"
+        },
+        "2": {
+          "name": "entity.name.type.parser.p4"
+        }
+      }
+    },
+    "controls": {
+      "name": "meta.control.p4",
+      "match": "\\b(control)\\s+([A-Za-z_][A-Za-z_0-9]*)\\b",
+      "captures": {
+        "1": {
+          "name": "storage.type.control.p4"
+        },
+        "2": {
+          "name": "entity.name.type.control.p4"
+        }
+      }
+    },
+    "states": {
+      "name": "meta.state.p4",
+      "match": "\\b(state)\\s+([A-Za-z_][A-Za-z_0-9]*)\\b",
+      "captures": {
+        "1": {
+          "name": "storage.type.state.p4"
+        },
+        "2": {
+          "name": "entity.name.type.states.p4"
+        }
+      }
+    },
+    "actions": {
+      "name": "meta.action.p4",
+      "match": "\\b(action|primitive_action)\\s+([A-Za-z_][A-Za-z_0-9]*)\\b",
+      "captures": {
+        "1": {
+          "name": "storage.type.function.p4"
+        },
+        "2": {
+          "name": "entity.name.function.action.p4"
+        }
+      }
+    },
+    "tables": {
+      "name": "meta.table.p4",
+      "match": "\\b(table)\\s+([A-Za-z_][A-Za-z_0-9]*)\\b",
+      "captures": {
+        "1": {
+          "name": "storage.type.table.p4"
+        },
+        "2": {
+          "name": "variable.other.table.p4"
+        }
+      }
+    },
+    "otherDeclarations": {
+      "patterns": [
+        {
+          "match": "\\b(package|field_list(?:_calculation)?|parser_exception|action_profile|action_selector|parser_value_set)\\s+([A-Za-z_][A-Za-z_0-9]*)",
+          "captures": {
+            "1": {
+              "name": "storage.type.p4"
+            },
+            "2": {
+              "name": "entity.name.type.p4"
+            }
+          }
+        },
+        {
+          "match": "\\b(extern)\\s+([A-Za-z_][A-Za-z_0-9]*)(?=\\s*(?:[<{]|;))",
+          "captures": {
+            "1": {
+              "name": "storage.type.p4"
+            },
+            "2": {
+              "name": "entity.name.type.extern.p4"
+            }
+          }
+        },
+        {
+          "match": "\\b(enum)\\s+([A-Za-z_][A-Za-z_0-9]*)(?=\\s*\\{)",
+          "captures": {
+            "1": {
+              "name": "storage.type.p4"
+            },
+            "2": {
+              "name": "entity.name.type.enum.p4"
+            }
+          }
+        },
+        {
+          "match": "\\b(typedef|type)\\s+(bit|varbit|int)\\s*<\\s*(\\d[\\d_]*)\\s*>\\s+([A-Za-z_][A-Za-z_0-9]*)(?=\\s*;)",
+          "captures": {
+            "1": {
+              "name": "storage.type.p4"
+            },
+            "2": {
+              "name": "storage.type.p4"
+            },
+            "3": {
+              "name": "constant.numeric.p4"
+            },
+            "4": {
+              "name": "entity.name.type.alias.p4"
+            }
+          }
+        },
+        {
+          "match": "\\b(typedef|type)\\s+([A-Za-z_][A-Za-z_0-9]*)\\s+([A-Za-z_][A-Za-z_0-9]*)(?=\\s*;)",
+          "captures": {
+            "1": {
+              "name": "storage.type.p4"
+            },
+            "2": {
+              "name": "entity.name.type.p4"
+            },
+            "3": {
+              "name": "entity.name.type.alias.p4"
+            }
+          }
+        }
+      ]
+    },
+    "builtin_types": {
+      "name": "storage.type.p4",
+      "match": "\\b(?:bit|varbit|int|bool|string|void|tuple|list|error|extern|enum|header_union|match_kind|type|typedef|value_set|packet_in|packet_out|register|direct_counter|direct_meter|counter|meter|metadata|calculated_field|blackbox)\\b"
+    },
+    "modifiers": {
+      "name": "storage.modifier.p4",
+      "match": "\\b(?:inout|out|in|const|abstract)\\b"
+    },
+    "keywords": {
+      "name": "keyword.control.p4",
+      "match": "\\b(?:action|actions|apply|control|default|else|entries|exit|for|header|if|key|package|parser|return|select|state|struct|switch|table|transition|break|continue|verify|reads|writes|fields|length|max_length|result|input|algorithm|output_width|calculated_field|update|latest|payload|primitive_action)\\b"
+    },
+    "operators": {
+      "name": "keyword.operator.p4",
+      "match": "&&&|\\.\\.|\\+\\+|\\|\\+\\||\\|-\\||==|!=|<=|>=|&&|\\|\\||<<|>>|[=<>!?:~+*/%^&|-]"
+    },
+    "constants": {
+      "name": "constant.language.p4",
+      "match": "\\b(?:true|false|accept|reject|this|default_action|NoError|exact|lpm|ternary|range|optional|selector|valid)\\b"
+    },
+    "builtins": {
+      "name": "support.function.builtin.p4",
+      "match": "\\b(?:extract|set_metadata|modify_field|add_to_field|subtract_from_field|add_header|remove_header|mark_to_drop|clone|recirculate|resubmit)\\b(?=\\s*\\()"
+    },
+    "tableprops": {
+      "name": "variable.other.property.p4",
+      "match": "\\b(?:size|implementation|counters|meters|support_timeout|min_size|max_size|action_profile|static_entries|default_action)\\b(?=\\s*[:=])"
+    },
+    "member_visits": {
+      "patterns": [
+        {
+          "match": "(\\.)(?!\\.)(?:[ \\t]*)([A-Za-z_][A-Za-z_0-9]*)(?=\\s*(?:<[^<>;{}]+>)?\\s*\\()",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor.p4"
+            },
+            "2": {
+              "name": "entity.name.function.member.p4"
+            }
+          }
+        },
+        {
+          "match": "(\\.)(?!\\.)(?:[ \\t]*)([A-Za-z_][A-Za-z_0-9]*)",
+          "captures": {
+            "1": {
+              "name": "punctuation.accessor.p4"
+            },
+            "2": {
+              "name": "variable.other.property.p4"
+            }
+          }
+        }
+      ]
+    },
+    "calls": {
+      "name": "entity.name.function.p4",
+      "match": "\\b[A-Za-z_][A-Za-z_0-9]*(?=\\s*\\()"
+    },
+    "legacyFields": {
+      "match": "\\b([A-Za-z_][A-Za-z_0-9]*)(?=\\s*:\\s*(?:[0-9]|\\*))",
+      "captures": {
+        "1": {
+          "name": "variable.other.property.field.p4"
+        }
+      }
+    },
+    "enum": {
+      "name": "meta.enum.p4",
+      "begin": "\\b(enum)\\s+(?:(bit|int)\\s*<\\s*([0-9][0-9_]*)\\s*>\\s*)?([A-Za-z_][A-Za-z_0-9]*)\\b(?=\\s*(?:\\{|$))",
+      "beginCaptures": {
+        "1": {
+          "name": "storage.type.p4"
+        },
+        "2": {
+          "name": "storage.type.p4"
+        },
+        "3": {
+          "name": "constant.numeric.p4"
+        },
+        "4": {
+          "name": "entity.name.type.enum.p4"
+        }
+      },
+      "end": "\\}|(?=;)",
+      "patterns": [
+        {
+          "include": "#comments"
+        },
+        {
+          "include": "#strings"
+        },
+        {
+          "include": "#annotations"
+        },
+        {
+          "include": "#numerics"
+        },
+        {
+          "match": "(?:^|(?<=[{,]))\\s*([A-Za-z_][A-Za-z_0-9]*)\\b(?=\\s*(?:[,}=]|$))",
+          "captures": {
+            "1": {
+              "name": "variable.other.enummember.p4"
+            }
+          }
+        },
+        {
+          "include": "#operators"
+        }
+      ]
+    }
+  }
+}
